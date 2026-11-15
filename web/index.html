@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Árvores UnB Gama</title>
+  <meta name="description" content="Disciplinas da FCTE (UnB Gama) organizadas em árvores AVL e Rubro-Negra, com visualização animada.">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='7' r='5' fill='%234f46e5'/%3E%3Ccircle cx='8' cy='24' r='5' fill='%23e5484d'/%3E%3Ccircle cx='24' cy='24' r='5' fill='%231f2430'/%3E%3Cpath d='M14 11 9.5 19.5M18 11l4.5 8.5' stroke='%2394a3b8' stroke-width='2'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="topo">
+    <div class="marca">
+      <svg class="logo" viewBox="0 0 32 32" aria-hidden="true">
+        <path d="M14 11 9.5 19.5M18 11l4.5 8.5" stroke="currentColor" stroke-width="2" opacity=".45"/>
+        <circle cx="16" cy="7" r="5" class="logo-a"/><circle cx="8" cy="24" r="5" class="logo-v"/><circle cx="24" cy="24" r="5" class="logo-p"/>
+      </svg>
+      <div>
+        <h1>Árvores UnB Gama</h1>
+        <p>AVL e Rubro-Negra sobre as disciplinas da FCTE · 2026.2</p>
+      </div>
+    </div>
+    <div class="topo-acoes">
+      <a class="botao fantasma" href="https://github.com/eda2-2026/G13_Arvores_EDA2-2026.2" target="_blank" rel="noopener">Código</a>
+      <button class="botao icone" id="tema" title="Alternar tema" aria-label="Alternar tema"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 0 0 18z" fill="currentColor"/></svg></button>
+    </div>
+  </header>
+
+  <div class="app">
+    <aside class="painel">
+      <nav class="abas" role="tablist">
+        <button class="aba ativa" data-aba="buscar" role="tab">Buscar</button>
+        <button class="aba" data-aba="editar" role="tab">Inserir / Remover</button>
+        <button class="aba" data-aba="comparar" role="tab">Comparar</button>
+        <button class="aba" data-aba="sobre" role="tab">Sobre</button>
+      </nav>
+
+      <!-- ============================== BUSCAR -->
+      <section class="conteudo-aba ativa" id="aba-buscar">
+        <div class="bloco">
+          <label class="rotulo" for="in-codigo">Por código <span class="tag avl">AVL</span></label>
+          <form class="linha" id="form-codigo">
+            <input id="in-codigo" list="lista-codigos" placeholder="ex.: FGA0038" autocomplete="off">
+            <button class="botao primario">Buscar</button>
+          </form>
+          <datalist id="lista-codigos"></datalist>
+          <p class="dica">Desce pela AVL comparando códigos: O(log n).</p>
+        </div>
+
+        <div class="bloco">
+          <label class="rotulo" for="in-nome">Por início do nome <span class="tag rb">Rubro-Negra</span></label>
+          <div class="auto">
+            <input id="in-nome" placeholder="ex.: introdução" autocomplete="off">
+            <ul class="sugestoes" id="sugestoes" hidden></ul>
+          </div>
+          <p class="dica" id="dica-nome">Autocompletar: busca por faixa na RB ordenada por nome.</p>
+        </div>
+
+        <div class="bloco">
+          <label class="rotulo">Faixa de códigos <span class="tag avl">AVL</span></label>
+          <form class="linha" id="form-faixa">
+            <input id="in-de" placeholder="de FGA0100" autocomplete="off">
+            <input id="in-ate" placeholder="até FGA0120" autocomplete="off">
+            <button class="botao">Ir</button>
+          </form>
+          <p class="dica">Percurso em-ordem podando subárvores fora do intervalo.</p>
+        </div>
+
+        <div class="bloco">
+          <label class="rotulo" for="in-prof">Por professor</label>
+          <form class="linha" id="form-prof">
+            <input id="in-prof" placeholder="ex.: Renato" autocomplete="off">
+            <button class="botao">Buscar</button>
+          </form>
+        </div>
+
+        <div class="resultados-cab" id="resultados-cab" hidden></div>
+        <ul class="resultados" id="resultados"></ul>
+      </section>
+
+      <!-- ============================== EDITAR -->
+      <section class="conteudo-aba" id="aba-editar">
+        <form class="bloco" id="form-inserir">
+          <div class="rotulo">Inserir disciplina</div>
+          <div class="grade">
+            <input name="codigo" placeholder="Código *" required>
+            <input name="carga_horaria" type="number" min="0" placeholder="Carga (h)">
+            <input name="nome" class="largo" placeholder="Nome *" required>
+            <input name="professores" class="largo" placeholder="Professores (separados por vírgula)">
+            <input name="numero_turmas" type="number" min="1" placeholder="Turmas">
+            <button type="button" class="botao fantasma" id="exemplo">Exemplo</button>
+          </div>
+          <button class="botao primario cheio">Inserir e animar</button>
+          <p class="dica">A animação usa a árvore em exibição. Na AVL, aparecem o fator ±2 e as rotações LL, RR, LR e RL. Na RB, as recolorações e rotações.</p>
+        </form>
+
+        <form class="bloco" id="form-remover">
+          <div class="rotulo">Remover disciplina</div>
+          <div class="linha">
+            <input id="in-remover" list="lista-codigos" placeholder="Código" autocomplete="off">
+            <button class="botao perigo">Remover</button>
+          </div>
+        </form>
+
+        <div class="bloco">
+          <div class="rotulo">Construir passo a passo</div>
+          <div class="grade">
+            <select id="demo-tipo">
+              <option value="avl">AVL</option>
+              <option value="rb">Rubro-Negra</option>
+              <option value="bst">BST simples</option>
+            </select>
+            <select id="demo-ordem">
+              <option value="ordenada">Entrada ordenada</option>
+              <option value="aleatoria">Entrada aleatória</option>
+              <option value="json">Ordem do JSON</option>
+            </select>
+            <label class="largo faixa-rotulo">Disciplinas: <b id="demo-n-val">12</b>
+              <input type="range" id="demo-n" min="3" max="31" value="12">
+            </label>
+          </div>
+          <button class="botao cheio" id="demo-iniciar">▶ Construir do zero</button>
+          <p class="dica">Ótimo para a apresentação: entrada ordenada mostra a BST virando lista e a AVL rotacionando.</p>
+        </div>
+      </section>
+
+      <!-- ============================== COMPARAR -->
+      <section class="conteudo-aba" id="aba-comparar">
+        <div class="bloco">
+          <div class="rotulo">Ordem de inserção das disciplinas</div>
+          <div class="segmentado" id="ordens">
+            <button data-ordem="json" class="ativo">JSON original</button>
+            <button data-ordem="ordenada">Ordenada</button>
+            <button data-ordem="aleatoria">Aleatória</button>
+          </div>
+        </div>
+        <div id="graficos"></div>
+        <p class="dica" id="leitura"></p>
+      </section>
+
+      <!-- ============================== SOBRE -->
+      <section class="conteudo-aba" id="aba-sobre">
+        <div class="texto">
+          <h3>O que é</h3>
+          <p>As 134 disciplinas da FCTE (UnB Gama) de 2026.2, retiradas do SIGAA, são organizadas em três árvores binárias de busca, todas implementadas à mão em Python. O Python roda no navegador via Pyodide.</p>
+          <h3>AVL (1962) — chave: código</h3>
+          <p>Cada nó guarda sua altura. O <b>fator de balanceamento</b> (altura esq. − altura dir.) fica sempre em −1, 0 ou +1. Quando vira ±2, uma rotação simples (LL/RR) ou dupla (LR/RL) corrige. Altura ≤ 1,44·log₂ n.</p>
+          <h3>Rubro-Negra — chave: nome</h3>
+          <p>Os nós são vermelhos ou pretos. A raiz é preta, não há dois vermelhos seguidos e todo caminho tem o mesmo número de pretos. Altura ≤ 2·log₂(n+1). Faz menos rotações que a AVL e corrige muitos casos só recolorindo.</p>
+          <h3>BST simples</h3>
+          <p>Fica aqui para comparação: sem balanceamento, a entrada ordenada vira uma lista de altura n.</p>
+          <table class="tabela">
+            <thead><tr><th>Operação</th><th>BST</th><th>AVL</th><th>RB</th></tr></thead>
+            <tbody>
+              <tr><td>Busca</td><td>O(n)</td><td>O(log n)</td><td>O(log n)</td></tr>
+              <tr><td>Inserção</td><td>O(n)</td><td>O(log n)</td><td>O(log n)</td></tr>
+              <tr><td>Remoção</td><td>O(n)</td><td>O(log n)</td><td>O(log n)</td></tr>
+              <tr><td>Faixa (k itens)</td><td>O(n)</td><td>O(log n + k)</td><td>O(log n + k)</td></tr>
+            </tbody>
+          </table>
+          <p class="dica">Grupo 13 · Estruturas de Dados e Algoritmos 2 · FCTE/UnB</p>
+        </div>
+      </section>
+    </aside>
+
+    <main class="palco">
+      <div class="barra-palco">
+        <div class="segmentado" id="visoes">
+          <button data-tipo="avl" class="ativo">AVL <small>código</small></button>
+          <button data-tipo="rb">Rubro-Negra <small>nome</small></button>
+          <button data-tipo="bst">BST <small>sem balanço</small></button>
+        </div>
+        <div class="chips" id="chips"></div>
+      </div>
+
+      <div class="tela" id="tela">
+        <svg id="svg" role="img" aria-label="Visualização da árvore"></svg>
+        <div class="faixa-demo" id="faixa-demo" hidden>
+          <span id="faixa-demo-texto">Demonstração</span>
+          <button class="botao pequeno" id="sair-demo">Voltar à árvore completa</button>
+        </div>
+        <div class="legenda" id="legenda"></div>
+        <div class="controles-tela">
+          <label class="seguir"><input type="checkbox" id="seguir" checked> câmera acompanha</label>
+          <button class="botao icone" id="zoom-mais" title="Aproximar">+</button>
+          <button class="botao icone" id="zoom-menos" title="Afastar">−</button>
+          <button class="botao icone" id="ajustar" title="Ajustar à tela">⤢</button>
+        </div>
+        <article class="cartao" id="cartao" hidden></article>
+        <div class="vazio" id="vazio" hidden>Árvore vazia</div>
+      </div>
+
+      <div class="player" id="player">
+        <button class="botao icone" id="p-tocar" title="Tocar / pausar" disabled>▶</button>
+        <button class="botao icone" id="p-proximo" title="Próximo passo" disabled>⏵</button>
+        <button class="botao icone" id="p-fim" title="Pular para o fim" disabled>⏭</button>
+        <div class="passo">
+          <div class="passo-texto" id="p-texto">Busque, insira ou remova uma disciplina para ver a árvore trabalhando.</div>
+          <div class="progresso"><div id="p-barra"></div></div>
+        </div>
+        <span class="contador" id="p-contador"></span>
+        <label class="velocidade" title="Velocidade">🐢<input type="range" id="p-vel" min="0.25" max="4" step="0.25" value="1">🐇</label>
+      </div>
+    </main>
+  </div>
+
+  <div class="carregando" id="carregando">
+    <div class="spinner"></div>
+    <p id="carregando-texto">Carregando Python no navegador (Pyodide)…</p>
+    <small>Na primeira vez pode levar alguns segundos.</small>
+  </div>
+
+  <div class="aviso" id="aviso" hidden></div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/pyodide/v0.26.4/full/pyodide.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

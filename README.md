@@ -158,4 +158,4 @@ Os dados foram retirados da página pública do SIGAA da Universidade de Brasíl
 
 ## Vídeo de apresentação
 
-[*(link do vídeo)*](https://youtu.be/EGS2NUCP6gs)
+[![Vídeo de apresentação](https://img.youtube.com/vi/EGS2NUCP6gs/maxresdefault.jpg)](https://youtu.be/EGS2NUCP6gs)
